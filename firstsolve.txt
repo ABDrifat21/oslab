@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+using namespace std;
+
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        cerr << "Error: Incorrect number of arguments.\n";
+        exit(1);
+    }
+
+    int num1 = stoi(argv[2]);
+    int num2 = stoi(argv[3]);
+
+    pid_t addition_pid, subtraction_pid;
+    int result = 0;
+    cout << "result = " << result << endl;
+
+    addition_pid = fork();
+    if (addition_pid == 0) {
+        int addition_result = num1 + num2;
+        cout << "ChildProcess-" << getpid() << ": addition_result = " << addition_result << endl;
+        exit(0);
+    }
+
+    subtraction_pid = fork();
+    if (subtraction_pid == 0) {
+        int subtraction_result = num1 - num2;
+        cout << "ChildProcess-" << getpid() << ": subtraction_result = " << subtraction_result << endl;
+        exit(0);
+    }
+
+    waitpid(addition_pid, NULL, 0);
+    waitpid(subtraction_pid, NULL, 0);
+
+    cout << "Child " << addition_pid << " successfully finished." << endl;
+    cout << "Child " << subtraction_pid << " successfully finished." << endl;
+
+    return 0;
+}
